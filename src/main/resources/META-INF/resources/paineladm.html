@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animais de Estimação</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4">
+        <h1 class="text-xl font-bold text-center text-blue-800 my-5">Adocão de dnimais de Estimação</h1>
+        <div id="authenticationStatus" class="text-center py-5"></div>
+        <div id="mainContent" style="display: none;">
+        <div id="projectDescription" class="mb-4 p-5 bg-white shadow rounded-lg">
+          <h2 class="text-lg font-semibold">Projeto Integrador 1 - adoção de animais - painel administrativo</h2>
+          <p>Esse projeto integrador demonstra como um aplicativo Quarkus implementa um endpoint CRUD para gerenciar animais para adoção usando Hibernate ORM com Panache. Essa interface invoca os endpoints de CRUD, que interagem com um banco de dados JPA e bibliotecas que são implementações de especificações Java (Jakarta, Microprofile e etc).</p>
+          <ul>
+              <li>Hibernate ORM com Panache para realizar tarefas de CRUD</li>
+              <li>RESTEasy para as APIs rest</li>
+              <li>ArC para injeção de dependências (CDI)</li>
+              <li>Narayana Transaction Manager para coordenar as transações</li>
+              <li>Agroal, implementação de alta performance de operações com dados</li>
+              <li>Infinispan usado como caching de entidades, para melhor performance</li>
+              <li>Undertow webserver, embutido no quarkus</li>
+              <li>htmx para o front-end</li>
+          </ul>
+      </div>
+        <div class="mb-4">
+          <h1 class="text-xl font-bold text-center text-blue-900 my-5">Adicionar novo animal</h1>
+            <!-- Formulário para adicionar novo animal -->
+            <form id="addAnimalForm" class="mb-5" onsubmit="addAnimal(); return false;">
+                <input type="text" id="addName" placeholder="Nome" class="px-4 py-2 border rounded-lg w-full mb-2">
+                <input type="text" id="addBreedName" placeholder="Raça" class="px-4 py-2 border rounded-lg w-full mb-2">
+                <select id="addSize" class="px-4 py-2 border rounded-lg w-full mb-2">
+                    <option value="SMALL">Pequeno</option>
+                    <option value="MEDIUM">Médio</option>
+                    <option value="LARGE">Grande</option>
+                </select>
+                <input type="date" id="addBirth" class="px-4 py-2 border rounded-lg w-full mb-2">
+                <input type="text" id="addStreet" placeholder="Rua" class="px-4 py-2 border rounded-lg w-full mb-2">
+                <input type="text" id="addNeighborhood" placeholder="Bairro" class="px-4 py-2 border rounded-lg w-full mb-2">
+                <input type="text" id="addCity" placeholder="Cidade" class="px-4 py-2 border rounded-lg w-full mb-2">
+                <input type="text" id="addNumber" placeholder="Número" class="px-4 py-2 border rounded-lg w-full mb-2">
+                <select id="addHealthStatus" class="px-4 py-2 border rounded-lg w-full mb-2">
+                    <option value="Saudável">Saudável</option>
+                    <option value="Saudável com limitações">Saudável com limitações</option>
+                    <option value="Não saudável">Não saudável</option>
+                </select>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Adicionar Animal</button>
+            </form>
+            <!-- Filtros -->
+            <input type="text" id="searchInput" placeholder="Buscar por nome..." class="px-4 py-2 border rounded-lg w-full md:w-1/2" onkeyup="filterAnimals()">
+            <select id="healthStatusFilter" class="px-4 py-2 border rounded-lg w-full md:w-1/4 mt-2 md:mt-0 md:ml-2" onchange="filterAnimals()">
+                <option value="">Todos os status de saúde</option>
+                <option value="Saudável">Saudável</option>
+                <option value="Não saudável">Não saudável</option>
+                <option value="Saudável com limitações">Saudável com limitações</option>
+            </select>
+            <select id="sizeFilter" class="px-4 py-2 border rounded-lg w-full md:w-1/4 mt-2 md:mt-0 md:ml-2" onchange="filterAnimals()">
+                <option value="">Todos os portes</option>
+                <option value="SMALL">Pequeno</option>
+                <option value="MEDIUM">Médio</option>
+                <option value="LARGE">Grande</option>
+            </select>
+            <input type="text" id="breedInput" placeholder="Buscar por raça..." class="px-4 py-2 border rounded-lg w-full md:w-1/2 mt-2" onkeyup="filterAnimals()">
+        </div>
+        <h1 class="text-xl font-bold text-center text-blue-900 my-5">Buscar e editar ou remover animais</h1>
+        <!-- Formulário de edição (inicialmente oculto) -->
+        <div id="editAnimalFormContainer" class="hidden bg-white shadow p-5 rounded-lg">
+          <h1>Menu de edicao</h1>
+          <form id="editAnimalForm" onsubmit="updateAnimal(); return false;">
+            <input type="hidden" id="editId">
+            <input type="text" id="editName" placeholder="Nome" class="px-4 py-2 border rounded-lg w-full mb-2">
+            <input type="text" id="editBreedName" placeholder="Raça" class="px-4 py-2 border rounded-lg w-full mb-2">
+            <select id="editSize" class="px-4 py-2 border rounded-lg w-full mb-2">
+                <option value="SMALL">Pequeno</option>
+                <option value="MEDIUM">Médio</option>
+                <option value="LARGE">Grande</option>
+            </select>
+            <input type="date" id="editBirth" class="px-4 py-2 border rounded-lg w-full mb-2">
+            <input type="text" id="editStreet" placeholder="Rua" class="px-4 py-2 border rounded-lg w-full mb-2">
+            <input type="text" id="editNeighborhood" placeholder="Bairro" class="px-4 py-2 border rounded-lg w-full mb-2">
+            <input type="text" id="editCity" placeholder="Cidade" class="px-4 py-2 border rounded-lg w-full mb-2">
+            <input type="text" id="editNumber" placeholder="Número" class="px-4 py-2 border rounded-lg w-full mb-2">
+            <select id="editHealthStatus">
+                <option value="Saudável">Saudável</option>
+                <option value="Saudável com limitações">Saudável com limitações</option>
+                <option value="Não saudável">Não saudável</option>
+            </select>
+            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg">Salvar Alterações</button>
+        </form>
+        <br>
+        <br>
+      </div>
+      <br>
+      <br>
+       
+        <div id="animals" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Os dados serão carregados aqui -->
+        </div>
+           
+    </div>
+    </div>
+
+
+    <script>
+        let animals = [];
+
+        window.onload = function() {
+            fetchAnimals();
+            const token = localStorage.getItem('jwt');
+            const mainContent = document.getElementById('mainContent');
+            const authStatus = document.getElementById('authenticationStatus');
+
+            if (!token) {
+                authStatus.textContent = 'Você não está autenticado. Redirecionando para a página de login...';
+                setTimeout(() => {
+                    window.location.href = 'login.html'; // Redireciona para a página de login
+                }, 3000);
+                return;
+            }
+
+            fetch('/secure', {  // Endpoint que verifica o token e retorna "acesso autorizado!"
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data.toString());
+                    if (data === "Acesso autorizado!") {
+                        mainContent.style.display = 'block'; // Mostra o conteúdo principal se autorizado
+                        authStatus.textContent = '';
+                    } else {
+                        console.log(data.toString());
+                        throw new Error('Não autorizado');
+                    }
+                })
+                .catch(error => {
+                    console.log(error.toString());
+                    authStatus.textContent = 'Você não está autorizado ou sua sessão expirou. Redirecionando para a página de login...';
+                    localStorage.removeItem('jwt'); // Limpa o token possivelmente inválido ou expirado
+                    setTimeout(() => {
+                        window.location.href = 'login.html'; // Redireciona para a página de login
+                    }, 3000);
+                });
+        };
+
+        function addAnimal() {
+            const token = localStorage.getItem('jwt');
+            const animal = {
+                name: document.getElementById('addName').value,
+                breed: {
+                    breed_name: document.getElementById('addBreedName').value,
+                    size: document.getElementById('addSize').value,
+                },
+                birth: document.getElementById('addBirth').value,
+                address: {
+                    street: document.getElementById('addStreet').value,
+                    neighborhood: document.getElementById('addNeighborhood').value,
+                    city: document.getElementById('addCity').value,
+                    number: document.getElementById('addNumber').value
+                },
+                healthStatus: document.getElementById('addHealthStatus').value
+            };
+
+            fetch('/repository/animais', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token  // Inclui o token JWT
+                },
+                body: JSON.stringify(animal)
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(() => {
+                    document.getElementById('addAnimalForm').reset();
+                    fetchAnimals(); // Reload list
+                })
+                .catch(error => console.error('Erro ao adicionar animal:', error));
+        }
+
+
+        function editAnimal(id) {
+            const animal = animals.find(a => a.id === id);
+            if (animal) {
+                // Preencha o formulário de edição com os dados do animal
+                document.getElementById('editId').value = animal.id;
+                document.getElementById('editName').value = animal.name;
+                document.getElementById('editBreedName').value = animal.breed.breed_name;
+                document.getElementById('editSize').value = animal.breed.size;
+                document.getElementById('editBirth').value = animal.birth;
+                document.getElementById('editStreet').value = animal.address.street;
+                document.getElementById('editNeighborhood').value = animal.address.neighborhood;
+                document.getElementById('editCity').value = animal.address.city;
+                document.getElementById('editNumber').value = animal.address.number;
+                document.getElementById('editHealthStatus').value = animal.healthStatus;
+                document.getElementById('editAnimalFormContainer').style.display = 'block'; // Exibe o formulário de edição
+
+              }
+        }
+        function updateAnimal() {
+            const token = localStorage.getItem('jwt');
+            const id = document.getElementById('editId').value;
+            const updatedAnimal = {
+                name: document.getElementById('editName').value,
+                breed: {
+                    breed_name: document.getElementById('editBreedName').value,
+                    size: document.getElementById('editSize').value
+                },
+                birth: document.getElementById('editBirth').value,
+                address: {
+                    street: document.getElementById('editStreet').value,
+                    neighborhood: document.getElementById('editNeighborhood').value,
+                    city: document.getElementById('editCity').value,
+                    number: document.getElementById('editNumber').value
+                },
+                healthStatus: document.getElementById('editHealthStatus').value
+            };
+
+            fetch(`/repository/animais/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify(updatedAnimal)
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to update the animal: ' + response.statusText);
+                    return response.json();
+                })
+                .then(() => {
+                    document.getElementById('editAnimalFormContainer').style.display = 'none'; // Esconder o formulário de edição
+                    fetchAnimals(); // Recarregar a lista de animais
+                })
+                .catch(error => console.error('Error updating animal:', error));
+        }
+
+
+        function deleteAnimal(id) {
+            const token = localStorage.getItem('jwt');
+            if (!confirm('Tem certeza que deseja deletar este animal?')) return;
+
+            fetch(`/repository/animais/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + token  // Inclui o token JWT
+                }
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    fetchAnimals(); // Recarrega a lista após deletar
+                })
+                .catch(error => console.error('Erro ao deletar animal:', error));
+        }
+
+        function fetchAnimals() {
+            const token = localStorage.getItem('jwt');
+            fetch('/repository/animais', {
+                headers: {
+                    'Authorization': 'Bearer ' + token  // Inclui o token JWT
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    animals = data;
+                    displayAnimals(animals);
+                })
+                .catch(error => console.error('Erro ao buscar animais:', error));
+        }
+
+        function filterAnimals() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const healthStatusFilter = document.getElementById('healthStatusFilter').value;
+            const sizeFilter = document.getElementById('sizeFilter').value;
+            const breedInput = document.getElementById('breedInput').value.toLowerCase();
+
+            const filteredAnimals = animals.filter(animal => {
+                return (animal.name.toLowerCase().includes(searchInput) || animal.breed.breed_name.toLowerCase().includes(breedInput))
+                    && (healthStatusFilter === "" || animal.healthStatus === healthStatusFilter)
+                    && (sizeFilter === "" || animal.breed.size === sizeFilter);
+            });
+
+            displayAnimals(filteredAnimals);
+        }
+
+        function displayAnimals(data) {
+            const container = document.getElementById('animals');
+            container.innerHTML = `
+
+
+
+            `;
+            data.forEach(animal => {
+                const animalDiv = document.createElement('div');
+                animalDiv.className = 'bg-white shadow p-5 rounded-lg';
+                animalDiv.innerHTML = `
+                    <h2 class="text-lg font-semibold">${animal.name} - ${animal.breed.breed_name}</h2>
+                    <p class="text-gray-600">Endereço: ${animal.address.street}, ${animal.address.number} - ${animal.address.neighborhood}, ${animal.address.city}</p>
+                    <p class="text-gray-600">Nascimento: ${animal.birth}</p>
+                    <p class="${animal.healthStatus === 'Não saudável' ? 'text-red-600' : 'text-green-600'}">Status de Saúde: ${animal.healthStatus}</p>
+                    <button onclick="editAnimal(${animal.id})" class="px-4 py-2 bg-yellow-500 text-white rounded-lg">Editar</button>
+                    <button onclick="deleteAnimal(${animal.id})" class="px-4 py-2 bg-red-500 text-white rounded-lg">Remover</button>
+
+                    `;
+
+
+
+                container.appendChild(animalDiv);
+            });
+        }
+
+
+    </script>
+</body>
+</html>

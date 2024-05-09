@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doe com Pix - Ajude um Amigo</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        header {
+            background-color: #F8F0E3;
+            padding: 20px 0;
+            position: relative;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: #E6DFD0;
+            border-radius: 50%;
+            box-shadow: 0px 5px 10px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            color: #C84B31;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .donation-container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .donation-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .pix-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .pix-key {
+            flex: 1;
+            margin-right: 20px;
+        }
+
+        .pix-key p {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .qr-code img {
+            width: 150px;
+            height: 150px;
+            border: 1px solid #ddd;
+        }
+
+        .donation-message {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .paw-icon {
+            font-size: 2em;
+            color: #C84B31;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Ajude um Amigo</h1>
+</header>
+
+<main>
+    <section class="donation-container">
+        <h2>Doe com Pix</h2>
+        <div class="pix-info">
+            <div class="pix-key">
+                <p>Chave Pix:</p>
+                <p>chavepix-ficticia@ong.que.nao.existe.com.br</p>
+            </div>
+            <div class="qr-code">
+                <img src="/qr-code.png" alt="QR Code Pix">
+            </div>
+        </div>
+        <div class="donation-message">
+            <p>Sua doação é muito importante para nós! <span class="paw-icon">🐾</span></p>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

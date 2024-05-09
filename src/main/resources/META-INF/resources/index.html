@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de adocao de animais UNIVESP</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            line-height: 1.6;
+            color: #333;
+            background-color: #F8F9F2;
+        }
+
+        header {
+            background-color: #EAC993;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        header h1 {
+            color: #5D3A1B;
+            margin-bottom: 5px;
+            font-size: 2.5em;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav li {
+            display: inline-block;
+            margin-right: 30px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #5D3A1B;
+        }
+
+        .hero {
+            background-color: #DBE8D3;
+            color: #5D3A1B;
+            text-align: center;
+            padding: 40px 20px;
+            border-bottom-left-radius: 80px;
+            border-bottom-right-radius: 80px;
+        }
+
+        .hero h2 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .button {
+            background-color: #CF8659;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 20px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .featured-pets {
+            padding: 40px;
+        }
+
+        .featured-pets h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #5D3A1B;
+        }
+
+        .pet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .pet-card {
+            background-color: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 2px 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .pet-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .pet-card h3 {
+            margin-top: 10px;
+            color: #CF8659;
+        }
+
+        footer {
+            background-color: #EAC993;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>AdoCAO de animais - UNIVESP - PI 1</h1>
+    <nav>
+        <ul>
+            <li><a href="/index.html">Home</a></li>
+            <li><a href="/login.html">Painel de admin</a></li>
+            <li><a href="/listapets.html">Pets disponiveis</a></li>
+            <li><a href="/contribua.html">Contribua</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <section class="hero">
+        <h2>Adote um bichinho</h2>
+        <p>Nos ajude a encontrar um lar para eles, adote!</p>
+        <a href="/listapets.html" class="button">Ver tabela de pets disponiveis</a>
+    </section>
+
+    <section class="featured-pets">
+        <h2>Pets em destaque</h2>
+        <div class="pet-grid">
+            <div class="pet-card">
+                <img src="https://images.unsplash.com/photo-1561037404-61cd46aa615b?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZG9nfGVufDB8fDB8fHww" alt="Billy">
+                <h3>Billy</h3>
+            </div>
+            <div class="pet-card">
+                <img src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=388&q=80" alt="Morgana">
+                <h3>Morgana</h3>
+            </div>
+        </div>I
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2024 UNIVESP</p>
+</footer>
+</body>
+</html>

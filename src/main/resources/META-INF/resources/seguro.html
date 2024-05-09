@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Segura</title>
+</head>
+<body>
+<h1>Página Segura</h1>
+<div id="dados">Carregando dados...</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const token = localStorage.getItem('jwt');
+        if (token) {
+            fetch('/secure/', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error('Falha na autenticação');
+                    return response.text();  // assumindo resposta em texto
+                })
+                .then(data => {
+                    document.getElementById('dados').textContent = data;
+                })
+                .catch(error => {
+                    document.getElementById('dados').textContent = 'Erro: ' + error.message;
+                });
+        } else {
+            document.getElementById('dados').textContent = 'Nenhum token encontrado. Faça login primeiro.';
+        }
+    });
+</script>
+</body>
+</html>

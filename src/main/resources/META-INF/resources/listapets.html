@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animais de Estimação</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4">
+        <h1 class="text-xl font-bold text-center text-blue-800 my-5">Animais de Estimação</h1>
+        
+        <div class="mb-4">
+            <input type="text" id="searchInput" placeholder="Buscar por nome..." class="px-4 py-2 border rounded-lg w-full md:w-1/2" onkeyup="filterAnimals()">
+            <select id="healthStatusFilter" class="px-4 py-2 border rounded-lg w-full md:w-1/4 mt-2 md:mt-0 md:ml-2" onchange="filterAnimals()">
+                <option value="">Todos os status de saúde</option>
+                <option value="Saudável">Saudável</option>
+                <option value="Não saudável">Não saudável</option>
+                <option value="Saudável com limitações">Saudável com limitações</option>
+            </select>
+            <select id="sizeFilter" class="px-4 py-2 border rounded-lg w-full md:w-1/4 mt-2 md:mt-0 md:ml-2" onchange="filterAnimals()">
+                <option value="">Todos os portes</option>
+                <option value="SMALL">Pequeno</option>
+                <option value="MEDIUM">Médio</option>
+                <option value="LARGE">Grande</option>
+            </select>
+            <input type="text" id="breedInput" placeholder="Buscar por raça..." class="px-4 py-2 border rounded-lg w-full md:w-1/2 mt-2" onkeyup="filterAnimals()">
+        </div>
+
+        <div id="animals" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Os dados serão carregados aqui -->
+        </div>
+    </div>
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org"></script>
+    <script>
+        let animals = [];
+
+        window.onload = function() {
+            fetch('/repository/animais')
+                .then(response => response.json())
+                .then(data => {
+                    animals = data;
+                    displayAnimals(animals);
+                })
+                .catch(error => console.error('Erro ao buscar animais:', error));
+        };
+
+        function filterAnimals() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const healthStatusFilter = document.getElementById('healthStatusFilter').value;
+            const sizeFilter = document.getElementById('sizeFilter').value;
+            const breedInput = document.getElementById('breedInput').value.toLowerCase();
+
+            const filteredAnimals = animals.filter(animal => {
+                return (animal.name.toLowerCase().includes(searchInput) || animal.breed.breed_name.toLowerCase().includes(breedInput))
+                    && (healthStatusFilter === "" || animal.healthStatus === healthStatusFilter)
+                    && (sizeFilter === "" || animal.breed.size === sizeFilter);
+            });
+
+            displayAnimals(filteredAnimals);
+        }
+
+        function displayAnimals(data) {
+            const container = document.getElementById('animals');
+            container.innerHTML = '';
+            data.forEach(animal => {
+                const animalDiv = document.createElement('div');
+                animalDiv.className = 'bg-white shadow p-5 rounded-lg';
+                animalDiv.innerHTML = `
+                    <h2 class="text-lg font-semibold">${animal.name} - ${animal.breed.breed_name}</h2>
+                    <p class="text-gray-600">Endereço: ${animal.address.street}, ${animal.address.number} - ${animal.address.neighborhood}, ${animal.address.city}</p>
+                    <p class="text-gray-600">Nascimento: ${animal.birth}</p>
+                    <p class="${animal.healthStatus === 'Não saudável' ? 'text-red-600' : 'text-green-600'}">Status de Saúde: ${animal.healthStatus}</p>
+                `;
+                container.appendChild(animalDiv);
+            });
+        }
+    </script>
+</body>
+</html>
